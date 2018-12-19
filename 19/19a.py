@@ -1,25 +1,6 @@
 class Machine:
 
-    def __init__(self, ip_register=0):
-        self.instructions = [
-            self.addr,
-            self.addi,
-            self.mulr,
-            self.muli,
-            self.banr,
-            self.bani,
-            self.borr,
-            self.bori,
-            self.setr,
-            self.seti,
-            self.gtir,
-            self.gtri,
-            self.gtrr,
-            self.eqir,
-            self.eqri,
-            self.eqrr
-        ]
-
+    def __init__(self, ip_register):
         self.registers = [0, 0, 0, 0, 0, 0]
         self.ip_register = ip_register
 
@@ -79,23 +60,14 @@ class Machine:
         self.registers[params[2]] = 1 if self.registers[params[0]] == self.registers[params[1]] else 0
 
     def execute(self, func_name, params):
-        # print('registers before')
-        # print(self.registers)
-        # print(func_name, params)
         func = getattr(self, func_name)
         func(params)
-        # print('registers after')
-        # print(self.registers)
-        # print()
 
 
-m = Machine()
 program = []
 # with open('19e.txt') as f:
-# with open('16.txt') as f:
 with open('19.txt') as f:
     ip_register = int(f.readline().split()[1])
-    m.ip_register = ip_register
 
     instructions = f.read().split('\n')
     for inst in instructions:
@@ -108,7 +80,8 @@ with open('19.txt') as f:
 
         program.append([opcode, params])
 
-# print(program)
+m = Machine(ip_register)
+
 while True:
     ip = m.get_ip()
     opcode, params = program[ip]
@@ -118,4 +91,4 @@ while True:
     if ip >= len(program):
         break
 
-print(m.registers)
+print(m.registers[0])

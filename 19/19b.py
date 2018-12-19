@@ -1,25 +1,6 @@
 class Machine:
 
-    def __init__(self, ip_register=0):
-        self.instructions = [
-            self.addr,
-            self.addi,
-            self.mulr,
-            self.muli,
-            self.banr,
-            self.bani,
-            self.borr,
-            self.bori,
-            self.setr,
-            self.seti,
-            self.gtir,
-            self.gtri,
-            self.gtrr,
-            self.eqir,
-            self.eqri,
-            self.eqrr
-        ]
-
+    def __init__(self, ip_register):
         self.registers = [0, 0, 0, 0, 0, 0]
         self.ip_register = ip_register
         self.regs = {
@@ -87,14 +68,8 @@ class Machine:
         self.registers[params[2]] = 1 if self.registers[params[0]] == self.registers[params[1]] else 0
 
     def execute(self, func_name, params):
-        # print('registers before')
-        # print(self.registers)
-        # print(func_name, params)
         func = getattr(self, func_name)
         func(params)
-        # print('registers after')
-        # print(self.registers)
-        # print()
 
     def to_str(self, opcode, params):
         regs = self.regs
@@ -134,13 +109,10 @@ class Machine:
         raise ValueError('should not be reached')
 
 
-m = Machine()
 program = []
 # with open('19e.txt') as f:
-# with open('16.txt') as f:
 with open('19.txt') as f:
     ip_register = int(f.readline().split()[1])
-    m.ip_register = ip_register
 
     instructions = f.read().split('\n')
     for inst in instructions:
@@ -153,32 +125,26 @@ with open('19.txt') as f:
 
         program.append([opcode, params])
 
+m = Machine(ip_register)
 m.registers = [1, 0, 0, 0, 0, 0]
+
 counter = 0
-
 while True:
-    try:
-        if counter == 22:
-            print("SETTING VALUE")
-            # m.registers[2] = 10551264
-            # m.registers[3] = 10551264
-            # m.registers[1] = 10551264
-        ip = m.get_ip()
-        opcode, params = program[ip]
-        print(['{reg} = {val}'.format(reg=m.regs[reg_idx], val=str(reg).zfill(5)) for reg_idx, reg in enumerate(m.registers)])
-        m.execute(opcode, params)
-        print(m.to_str(opcode, params))
-        # asd
+    if counter == 22:
+        print("SETTING VALUE")
+        # m.registers[2] = 10551264
+        # m.registers[3] = 10551264
+        # m.registers[1] = 10551264
+    ip = m.get_ip()
+    opcode, params = program[ip]
+    print(['{reg} = {val}'.format(reg=m.regs[reg_idx], val=str(reg).zfill(5)) for reg_idx, reg in enumerate(m.registers)])
+    m.execute(opcode, params)
+    print(m.to_str(opcode, params))
 
-        ip = m.inc_ip()
-        if ip >= len(program):
-            break
-
-        counter += 1
-        if counter > 35:
-            asd
-    except IndexError as e:
-        print(ip)
+    ip = m.inc_ip()
+    if ip >= len(program):
         break
 
-print(m.registers)
+    counter += 1
+    if counter > 35:
+        raise ValueError("crash")
